@@ -11,7 +11,7 @@ csv_file_path = 'job_details.csv'
 
 with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file) #This object to write rows into the CSV file
-    writer.writerow(['Job Title', 'Job Type', 'location','Company Name', 'Deadline', 'Posting Date'])  # Writing the header row
+    writer.writerow(['Job Title', 'Job Type', 'location','Company Name', 'Deadline', 'Posting Date', 'Applications', 'Views', 'Years of Experience'])  # Writing the header row
 
     # Loop through pages 1 to 17 and scrape job details
     for page in range(1, 60):
@@ -30,6 +30,9 @@ with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
             location=job.find('span', class_='job-location')
             deadline = job.find('span', class_='job-date')
             posting_date = job.find('span', class_='job-date-ago')
+            applications = job.find('span', class_=['count', 'applications'])
+            views = job.find('span', class_=['count', 'views'])
+            years_experience = job.find('strong', class_=lambda x: x and 'experience_year' in x)
 
             # Extract the text or set 'N/A' if the element is not found
             title_text = title.text.strip() if title else 'N/A'
@@ -38,7 +41,10 @@ with open(csv_file_path, mode='w', newline='', encoding='utf-8') as file:
             location_text=location.text.strip() if location else 'N/A'
             deadline_text = deadline.text.strip() if deadline else 'N/A'
             posting_date_text = posting_date.text.strip() if posting_date else 'N/A'
+            applications_text = applications.text.strip() if applications else 'N/A'
+            views_text = views.text.strip() if views else 'N/A'
+            years_experience_text = years_experience.text.strip() if years_experience else 'N/A'
 
-            writer.writerow([title_text, job_type_text,location_text ,company_name_text, deadline_text, posting_date_text])
+            writer.writerow([title_text, job_type_text,location_text ,company_name_text, deadline_text, posting_date_text, applications_text, views_text, years_experience_text])
 
 print(f"Job details scraped and saved to {csv_file_path}")
